@@ -5,6 +5,8 @@ import Json.Decode exposing (..)
 import Json.Encode
 import Global exposing (..)
 
+import Models exposing (..)
+
 baseUrl : String
 baseUrl = "http://localhost:9000"
 
@@ -27,6 +29,14 @@ loginRequest phone password =
   in
     Http.post url (Http.jsonBody payload) userDecoder
 
+profileSaveRequest : String -> String -> String -> Http.Request User
+profileSaveRequest name description avatarUrl =
+  let
+    url = endpointUrl "/profile"
+    payload = encodeProfileSave name description avatarUrl
+  in
+    Http.post url (Http.jsonBody payload) userDecoder
+
 encodeCredentials : String -> String -> Json.Encode.Value
 encodeCredentials phone password =
   (Json.Encode.object
@@ -35,11 +45,14 @@ encodeCredentials phone password =
         ]
       )
 
-userDecoder : Json.Decode.Decoder User
-userDecoder =
-  Json.Decode.map5 User
-    (field "id" int)
-    (field "phone" string)
-    (oneOf[field "name" string, succeed ""])
-    (field "description" string)
-    (field "authToken" string)
+encodeProfileSave : String -> String -> String -> Json.Encode.Value
+encodeProfileSave name description avatarUrl =
+  (Json.Encode.object
+        [ ("name", Json.Encode.string name)
+        , ("description", Json.Encode.string description)
+        , ("avatarUrl", Json.Encode.string avatarUrl)
+        ]
+      )
+
+httpSendAuthorized : String -> Json.Encode.Value -> Json.Decode.Decoder T -> Http.Request T
+httpSendAuthorized

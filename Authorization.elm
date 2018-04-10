@@ -6,6 +6,8 @@ import Html.Events exposing (..)
 import Http
 import Json.Decode as Decode
 import Debug
+import GlobalAuth exposing (..)
+import GlobalProfile exposing (..)
 import Global exposing (..)
 
 import Backend
@@ -22,7 +24,9 @@ authUpdate msg model =
     Login ->
       (model, Http.send LoggedIn (Backend.loginRequest model.authModel.phone model.authModel.password))
     LoggedIn (Ok user) ->
-      ({model|screen=ProfileScreen, currentUser=Just user, authModel=authInitModel}, Cmd.none)
+      let profileModel = model.profileModel in
+      ({model| screen=ProfileScreen, currentUser=Just user, authModel=authInitModel
+             , profileModel = {profileModel|notSavedUser=user, savedUser=user}}, Cmd.none)
     LoggedIn (Err (Http.BadStatus response)) ->
       let authModel = model.authModel
       in ({model|authModel={authModel|message=response.body}}, Cmd.none)
@@ -36,9 +40,9 @@ authView authModel =
     [ h1 [] [text "Authorization"]
     , input [onInput (\x -> UpdateAuthModel {authModel|phone=x}), placeholder "Phone"] []
     , br [] []
-    , input [onInput (\x -> UpdateAuthModel {authModel|password=x}), placeholder "Password"] []
+    , input [onInput (\x -> UpdateAuthModel {authModel|password=x}), placeholder "Password", type_ "password"] []
     , br [] []
     , button [onClick Register] [text "Register"]
     , button [onClick Login] [text "Login"]
-    , div [] [text authModel.message]
+    , div [style [("color", "red")]] [text authModel.message]
     ]

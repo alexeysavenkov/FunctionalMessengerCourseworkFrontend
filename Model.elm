@@ -5,6 +5,7 @@ type alias Model =
   , gifUrl : String
   , screen : Screen
   , authModel : AuthModel
+  , profileModel : ProfileModel
   }
 
 type Screen =

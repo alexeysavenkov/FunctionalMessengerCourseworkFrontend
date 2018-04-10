@@ -7,11 +7,14 @@
         "."
     ],
     "exposed-modules": [],
+    "native-modules": true,
     "dependencies": {
+        "danyx23/elm-dropzone": "2.0.1 <= v < 3.0.0",
+        "danyx23/elm-mimetype": "4.0.0 <= v < 5.0.0",
         "elm-lang/core": "5.1.1 <= v < 6.0.0",
         "elm-lang/html": "2.0.0 <= v < 3.0.0",
         "elm-lang/http": "1.0.0 <= v < 2.0.0"
     },
     "elm-version": "0.18.0 <= v < 0.19.0",
-    "make-info": {"main": "Main.elm", "out": "dist/main.js"}
+  "make-info": {"main": "Main.elm", "out": "dist/main.js"}
 }
