@@ -14,4 +14,5 @@ userSearchInitModel = UserSearchModel "" []
 type UserSearchMsg
   = SearchUsers
   | SearchUsersCompleted (Result Http.Error (List User))
+  | ChangeQuery String
 

@@ -8,25 +8,30 @@ import Json.Decode as Decode
 import Debug
 import GlobalAuth exposing (..)
 import GlobalProfile exposing (..)
+import GlobalModerator exposing (..)
 import Global exposing (..)
 
 import Backend
 
 
 
-authUpdate : AuthMsg -> Model -> (Model, Cmd AuthMsg)
+authUpdate : AuthMsg -> Model -> (Model, Cmd Msg)
 authUpdate msg model =
   case msg of
     UpdateAuthModel newModel ->
       ({model|authModel={newModel|message=""}}, Cmd.none)
     Register ->
-      (model, Http.send LoggedIn (Backend.registerRequest model.authModel.phone model.authModel.password))
+      (model, Http.send (\x -> Auth (LoggedIn x)) (Backend.registerRequest model.authModel.phone model.authModel.password))
     Login ->
-      (model, Http.send LoggedIn (Backend.loginRequest model.authModel.phone model.authModel.password))
+      (model, Http.send (\x -> Auth (LoggedIn x)) (Backend.loginRequest model.authModel.phone model.authModel.password))
     LoggedIn (Ok user) ->
-      let profileModel = model.profileModel in
-      ({model| screen=ProfileScreen, currentUser=Just user, authModel=authInitModel
-             , profileModel = {profileModel|notSavedUser=user, savedUser=user}}, Cmd.none)
+      let profileModel = model.profileModel
+          (screen, cmd) =
+            (if user.isModerator
+            then (ModeratorScreen, Http.send (\x -> Moderator (LoadedComplaints x)) (Backend.unresolvedComplaints user))
+            else (ProfileScreen, Cmd.none)) in
+      ({model| screen=screen, currentUser=Just user, authModel=authInitModel
+             , profileModel = {profileModel|notSavedUser=user, savedUser=user}}, cmd)
     LoggedIn (Err (Http.BadStatus response)) ->
       let authModel = model.authModel
       in ({model|authModel={authModel|message=response.body}}, Cmd.none)

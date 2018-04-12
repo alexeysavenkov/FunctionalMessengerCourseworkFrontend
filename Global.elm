@@ -5,7 +5,10 @@ import GlobalAuth exposing (..)
 import GlobalProfile exposing (..)
 import GlobalUserSearch exposing (..)
 import GlobalDialogs exposing (..)
+import GlobalFriends exposing (..)
+import GlobalMessages exposing (..)
 import Models exposing (..)
+import GlobalModerator exposing (..)
 
 type alias Model =
   { topic : String
@@ -15,6 +18,9 @@ type alias Model =
   , profileModel : ProfileModel
   , userSearchModel : UserSearchModel
   , dialogsModel : DialogsModel
+  , friendsModel : FriendsModel
+  , messagesModel : MessagesModel
+  , moderatorModel : ModeratorModel
   , currentUser : Maybe User
   }
 
@@ -24,13 +30,24 @@ type Screen
   | UserSearchScreen
   | DialogsScreen
   | FriendsScreen
+  | BlacklistScreen
+  | MessagesScreen
+  | ModeratorScreen
 
 type Msg
   = Auth AuthMsg
   | Profile ProfileMsg
   | UserSearch UserSearchMsg
   | Dialogs DialogsMsg
+  | Friends FriendsMsg
+  | Messages MessagesMsg
+  | Moderator ModeratorMsg
   | Logout
   | ChangeScreen Screen
+  | GoToProfile User
+  | GoToFriends
+  | GoToDialogs
 
-  -- AUTHORIZATION
+currentUser : Model -> User
+currentUser model = Maybe.withDefault emptyUser model.currentUser
+

@@ -1,0 +1,17 @@
+img {
+   width: 100px;
+   height: 100px;
+}
+
+.profilePreview {
+    display: flex;
+    align-items: center;
+}
+
+.profilePreview > * {
+    margin-right: 19px;
+}
+
+body {
+   margin: 100px !important
+}

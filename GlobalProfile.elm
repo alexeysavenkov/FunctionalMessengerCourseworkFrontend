@@ -9,6 +9,7 @@ type alias ProfileModel =
   { savedUser : User
   , notSavedUser : User
   , dropZone : DropZone.Model
+  , userInfo : Maybe UserInfo
 
     -- store the DropZone model in your apps Model
     , files : List NativeFile
@@ -16,7 +17,7 @@ type alias ProfileModel =
   }
 
 profileInitModel : ProfileModel
-profileInitModel = ProfileModel emptyUser emptyUser DropZone.init [] []
+profileInitModel = ProfileModel emptyUser emptyUser DropZone.init Nothing [] []
 
 type ProfileMsg
   = ChangeProfileInfo User
@@ -26,6 +27,11 @@ type ProfileMsg
       -- add an Message that takes care of hovering, dropping etc
   | FileReadSucceeded String
   | FileReadFailed FileReader.Error
+  | FriendRequest Int Bool
+  | Blacklist Int Bool
+  | Report Int String
+  | ProfileForceUpdate
+  | ProfileForceUpdated (Result Http.Error UserInfo)
 
 
 
