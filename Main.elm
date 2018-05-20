@@ -30,7 +30,7 @@ import Backend exposing (..)
 main : Program Never Model Msg
 main =
   Html.program
-    { init = init "cats"
+    { init = init
     , view = view
     , update = update
     , subscriptions = subscriptions
@@ -42,9 +42,17 @@ main =
 
 
 
-init : String -> (Model, Cmd Msg)
-init topic =
-  ( Model topic "waiting.gif" AuthorizationScreen authInitModel profileInitModel userSearchInitModel dialogsInitModel friendsInitModel messagesInitModel moderatorInitModel Maybe.Nothing
+init : (Model, Cmd Msg)
+init =
+  ( Model
+      AuthorizationScreen
+      authInitModel profileInitModel
+      userSearchInitModel
+      dialogsInitModel
+      friendsInitModel
+      messagesInitModel
+      moderatorInitModel
+      Maybe.Nothing
   , Cmd.none
   )
 
@@ -57,6 +65,9 @@ init topic =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    Logout ->
+      ( { model | currentUser = Nothing, screen = AuthorizationScreen }, Cmd.none )
+
     Auth authMsg ->
       let (newModel, cmd) = authUpdate authMsg model
       in (newModel, cmd)
@@ -65,9 +76,7 @@ update msg model =
       let (newModel, cmd) = profileUpdate profileMsg model
       in (newModel, Cmd.map Profile cmd)
 
-    Logout ->
-      ( { model | currentUser = Nothing, screen = AuthorizationScreen }, Cmd.none )
-
+    -- перелік подій та реакції на них продовжується далі
     GoToProfile user ->
       let
         profileModel = model.profileModel
@@ -112,7 +121,7 @@ update msg model =
 
     Friends friendsMsg ->
       let (newModel, cmd) = friendsUpdate friendsMsg model
-      in (newModel, Cmd.map Friends cmd)
+      in (newModel, cmd)
 
     Messages messagesMsg ->
       messagesUpdate messagesMsg model
@@ -135,22 +144,27 @@ view model =
       ModeratorScreen -> Html.map Moderator (moderatorView (currentUser model) model.moderatorModel)
       _ ->
         div []
-          [ button [onClick Logout] [text "Logout"]
-          , button [onClick (ChangeScreen UserSearchScreen)] [text "Search Users"]
-          , button [onClick (GoToDialogs)] [text "Go to dialogs"]
-          , button [onClick (ChangeScreen ProfileScreen)] [text "My Profile"]
-          , button [onClick GoToFriends] [text "Friends"]
-         -- , button [onClick (ChangeScreen BlacklistScreen)] [text "Blacklist"]
+          [ button [onClick Logout, class "form-control"] [text "Logout"]
+          , button [onClick (ChangeScreen UserSearchScreen), class "form-control"] [text "Search Users"]
+          , button [onClick (GoToDialogs), class "form-control"] [text "Go to dialogs"]
+          , button [onClick (ChangeScreen ProfileScreen), class "form-control"] [text "My Profile"]
+          , button [onClick GoToFriends, class "form-control"] [text "Friends"]
           , case model.screen of
               ProfileScreen -> Html.map Profile (profileView (currentUser model) model.profileModel)
               UserSearchScreen -> (userSearchView (currentUser model)  model.userSearchModel)
-              FriendsScreen -> Html.map Friends (friendsView (currentUser model) model.friendsModel)
+              FriendsScreen -> (friendsView (currentUser model) model.friendsModel)
               DialogsScreen -> Html.map Dialogs (dialogsView (currentUser model) model.dialogsModel)
               MessagesScreen -> messagesView (currentUser model) model.messagesModel
               ModeratorScreen -> Html.map Moderator (moderatorView (currentUser model) model.moderatorModel)
               _ -> p [] []
           ]
-  in div [] [node "link" [ rel "stylesheet", href "/site.css" ] [], body]
+  in div [] [
+      node "link" [ rel "stylesheet", href "/site.css" ] [],
+      node "link" [ rel "stylesheet", href "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" ] [],
+      node "script" [ src "https://code.jquery.com/jquery-3.2.1.slim.min.js" ] [],
+      node "script" [ src "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" ] [],
+      node "script" [ src "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" ] [],
+      body]
 
 
 -- SUBSCRIPTIONS
@@ -162,9 +176,3 @@ subscriptions model =
 
 
 
--- HTTP
-
-
-decodeGifUrl : Decode.Decoder String
-decodeGifUrl =
-  Decode.at ["data", "image_url"] Decode.string

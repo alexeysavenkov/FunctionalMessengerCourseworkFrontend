@@ -125,8 +125,8 @@ profileView currentUser model =
       userInfo = model.notSavedUser
       userRelations = Maybe.withDefault (UserInfo -1 False False False False False) model.userInfo
   in
-    div []
-      [ h1 [] [text (("Profile of " ++ (if String.isEmpty userInfo.name then "*No name*" else userInfo.name)) ++ if isYourProfile then " (You)" else "")]
+    div [class "jumbotron"]
+      [ h1 [class "display-4"] [text (("Profile of " ++ (if String.isEmpty userInfo.name then "*No name*" else userInfo.name)) ++ if isYourProfile then " (You)" else "")]
       , if userRelations.youAreBlacklisted
         then h2 [] [text "You were blacklisted"]
         else (if userInfo.id == -1 && (not isYourProfile) then text "Loading..." else div [] [
@@ -136,17 +136,17 @@ profileView currentUser model =
                 (Just id, _) -> Backend.baseUrl ++ "/image/" ++ (toString id) ++ "?auth=" ++ currentUser.authToken
                 (_, _) -> ""
               )] []
-          , renderDropZone model.dropZone
+          , if isYourProfile then renderDropZone model.dropZone else text ""
           , if isYourProfile
-            then input [onInput (\x -> ChangeProfileInfo {userInfo|name=x}), placeholder "Name", value userInfo.name] []
+            then input [onInput (\x -> ChangeProfileInfo {userInfo|name=x}), placeholder "Name", value userInfo.name, class "form-control"] []
             else div [] [text "Name: ", text userInfo.name]
           , br [] []
           , if isYourProfile
-            then input [onInput (\x -> ChangeProfileInfo {userInfo|description=x}), placeholder "Description", value userInfo.description] []
+            then input [onInput (\x -> ChangeProfileInfo {userInfo|description=x}), placeholder "Description", value userInfo.description, class "form-control"] []
             else div [] [text "Description: ", text userInfo.description]
           , br [] []
           , if isYourProfile
-            then button [onClick SaveProfileChanges] [text "Save changes"]
+            then button [onClick SaveProfileChanges, class "form-control"] [text "Save changes"]
             else div [] [
                 if userRelations.isFriend
                 then button [onClick (FriendRequest userInfo.id False)] [text "Remove from friends"]

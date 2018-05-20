@@ -34,20 +34,20 @@ messagesUpdate msg model =
 
 messagesView : User -> MessagesModel -> Html Msg
 messagesView currentUser model =
-    div []
-      [ h2 [] [text "Dialog"]
-      , h3 [] [text (Tuple.second model.dialog)]
+    div [class "jumbotron"]
+      [ h2 [class "display-4"] [text "Dialog"]
+      , h3 [class "display-4"] [text (Tuple.second model.dialog)]
       , div []
         (case model.messages of
           Just messages -> List.map (\(user, msg) ->
             div [class "profilePreview", onClick (GoToProfile user)] [
-                img [src (avatarUrl currentUser user)] [],
+                img [src (avatarUrl currentUser user), style [("border-radius","20px"), ("margin","10px")]] [],
                 div [class "name"] [text (user.name ++ ":")],
                 div [class "msg"] [text msg]
               ]
           ) messages
           Nothing -> [text "Loading..."]
         )
-      , textarea [onInput (\x -> Messages (UpdateMessageText x))] [text model.messageText]
-      , button [onClick (Messages SendMessage)] [text "Send message"]
+      , textarea [onInput (\x -> Messages (UpdateMessageText x)), class "form-control"] [text model.messageText]
+      , button [onClick (Messages SendMessage), class "form-control"] [text "Send message"]
       ]

@@ -11,9 +11,7 @@ import Models exposing (..)
 import GlobalModerator exposing (..)
 
 type alias Model =
-  { topic : String
-  , gifUrl : String
-  , screen : Screen
+  { screen : Screen
   , authModel : AuthModel
   , profileModel : ProfileModel
   , userSearchModel : UserSearchModel

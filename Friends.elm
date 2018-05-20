@@ -12,22 +12,22 @@ import Http exposing (..)
 import Backend exposing (..)
 
 
-friendsUpdate : FriendsMsg -> Model -> (Model, Cmd FriendsMsg)
+friendsUpdate : FriendsMsg -> Model -> (Model, Cmd Msg)
 friendsUpdate msg model =
   case msg of
     RemoveFriend userId ->
-      (model, Http.send (\_ -> ForceFriendsUpdate)
+      (model, Http.send (\_ -> Friends ForceFriendsUpdate)
           (Backend.friendRequest (currentUser model) userId False)
         )
     ApproveRequest userId ->
-      (model, Http.send (\_ -> ForceFriendsUpdate)
+      (model, Http.send (\_ -> Friends ForceFriendsUpdate)
           (Backend.friendRequest (currentUser model) userId True)
         )
     ForceFriendsUpdate ->
       (model, Cmd.batch
-          [ Http.send FriendsUpdated
+          [ Http.send (\x -> Friends (FriendsUpdated x))
             (Backend.loadFriends (currentUser model))
-          , Http.send FriendReqsUpdated
+          , Http.send (\x -> Friends (FriendReqsUpdated x))
             (Backend.loadFriendReqs (currentUser model))
           ]
         )
@@ -40,7 +40,7 @@ friendsUpdate msg model =
     _ -> (model, Cmd.none)
 
 
-friendsView : User -> FriendsModel -> Html FriendsMsg
+friendsView : User -> FriendsModel -> Html Msg
 friendsView currentUser model =
     div []
       [ h2 [] [text "Friend Requests"]
@@ -53,22 +53,22 @@ friendsView currentUser model =
           Nothing -> text "Loading..."
       ]
 
-renderFriendPreview : User -> (User, UserInfo) -> Html FriendsMsg
+renderFriendPreview : User -> (User, UserInfo) -> Html Msg
 renderFriendPreview currentUser (user, userInfo) =
-  div [] [
+  div [onClick (GoToProfile user)] [
     img [src (avatarUrl currentUser user)] [],
     div [class "name"] [text user.name],
     div [class "description"] [text user.description],
-    button [onClick (RemoveFriend user.id)] [text "Remove From Friends"]
+    button [onClick (Friends (RemoveFriend user.id))] [text "Remove From Friends"]
   ]
 
-renderFriendReqPreview : User -> (User, UserInfo) -> Html FriendsMsg
+renderFriendReqPreview : User -> (User, UserInfo) -> Html Msg
 renderFriendReqPreview currentUser (user, userInfo) =
-  div [] [
+  div [onClick (GoToProfile user)] [
     img [src (avatarUrl currentUser user)] [],
     div [class "name"] [text user.name],
     div [class "description"] [text user.description],
-    button [onClick (RemoveFriend user.id)] [text "Decline"],
-    button [onClick (ApproveRequest user.id)] [text "Approve"]
+    button [onClick (Friends (RemoveFriend user.id))] [text "Decline"],
+    button [onClick (Friends (ApproveRequest user.id))] [text "Approve"]
   ]
 

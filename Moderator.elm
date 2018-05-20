@@ -18,6 +18,7 @@ moderatorView currentUser model =
     Home ->
       div [] [
         h1 [] [text "Moderator dashboard"],
+        button [onClick LoadComplaints] [text "Refresh"],
         div []
           (List.map
             (\(user, reasons, complaints, messages) ->
@@ -59,5 +60,5 @@ moderatorUpdate moderatorMsg model =
       LoadedComplaints _ ->
         (model, Cmd.none)
       GoToScreen screen ->
-        ({model|moderatorModel={moderatorModel|screen=screen}}, Cmd.none)
+        ({model|moderatorModel={moderatorModel|screen=screen}}, Http.send (\x -> Moderator (LoadedComplaints x)) (Backend.unresolvedComplaints (currentUser model)))
 
