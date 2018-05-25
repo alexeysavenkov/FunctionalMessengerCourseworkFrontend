@@ -17,8 +17,9 @@ moderatorView currentUser model =
   case model.screen of
     Home ->
       div [] [
-        h1 [] [text "Moderator dashboard"],
-        button [onClick LoadComplaints] [text "Refresh"],
+        h1 [class "display-4"] [text "Moderator dashboard"],
+        button [onClick LoadComplaints, class "form-control"] [text "Refresh"],
+        button [onClick ModLogout, class "form-control"] [text "Logout"],
         div []
           (List.map
             (\(user, reasons, complaints, messages) ->
@@ -61,4 +62,4 @@ moderatorUpdate moderatorMsg model =
         (model, Cmd.none)
       GoToScreen screen ->
         ({model|moderatorModel={moderatorModel|screen=screen}}, Http.send (\x -> Moderator (LoadedComplaints x)) (Backend.unresolvedComplaints (currentUser model)))
-
+      ModLogout -> (model, Cmd.none)

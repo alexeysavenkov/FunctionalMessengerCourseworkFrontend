@@ -56,8 +56,9 @@ dialogsUpdate msg model =
 dialogsView : User -> DialogsModel -> Html DialogsMsg
 dialogsView currentUser model =
     div []
-      [ h2 [] [text "Create New Dialog"]
-      , input [onInput NameInput, placeholder "Name of new dialog"] [text model.nameInput]
+      [ h2 [class "display-4"] [text "Create New Dialog"]
+      , input [onInput NameInput, placeholder "Name of new dialog", class "form-control"] [text model.nameInput]
+      , b [] [text "Select users for new dialog"]
       , div []
           (List.map (\(user, flag) ->
             div []
@@ -67,10 +68,10 @@ dialogsView currentUser model =
           ) model.selectedFriends)
       , button [onClick CreateDialog, disabled (List.isEmpty (List.filter (\(_, b) -> b) model.selectedFriends) || String.isEmpty model.nameInput)] [text "Create Dialog"]
       , br [] []
-      , h2 [] [text "Dialogs"]
-      , div []
+      , h2 [class "display-4"] [text "Dialogs"]
+      , div [class "list-group"]
           (List.map (\(id, name) ->
-            div [onClick (GoToDialog (id,name))]
+            div [onClick (GoToDialog (id,name)), class "list-group-item"]
               [ text ("Dialog " ++ name)
 
               ]

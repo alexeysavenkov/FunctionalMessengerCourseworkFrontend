@@ -68,6 +68,9 @@ update msg model =
     Logout ->
       ( { model | currentUser = Nothing, screen = AuthorizationScreen }, Cmd.none )
 
+    Moderator ModLogout ->
+      ( { model | currentUser = Nothing, screen = AuthorizationScreen }, Cmd.none )
+
     Auth authMsg ->
       let (newModel, cmd) = authUpdate authMsg model
       in (newModel, cmd)

@@ -43,32 +43,32 @@ friendsUpdate msg model =
 friendsView : User -> FriendsModel -> Html Msg
 friendsView currentUser model =
     div []
-      [ h2 [] [text "Friend Requests"]
+      [ h2 [class "display-4"] [text "Friend Requests"]
       , case model.friendRequests of
-          Just reqs -> div [] (List.map (renderFriendReqPreview currentUser) reqs)
+          Just reqs -> div [class "list-group"] (List.map (renderFriendReqPreview currentUser) reqs)
           Nothing -> text "Loading..."
-      , h2 [] [text "Friends"]
+      , h2 [class "display-4"] [text "Friends"]
       , case model.friends of
-          Just fr -> div [] (List.map (renderFriendPreview currentUser) fr)
+          Just fr -> div [class "list-group"] (List.map (renderFriendPreview currentUser) fr)
           Nothing -> text "Loading..."
       ]
 
 renderFriendPreview : User -> (User, UserInfo) -> Html Msg
 renderFriendPreview currentUser (user, userInfo) =
-  div [onClick (GoToProfile user)] [
+  div [onClick (GoToProfile user), class "list-group-item"] [
     img [src (avatarUrl currentUser user)] [],
-    div [class "name"] [text user.name],
-    div [class "description"] [text user.description],
-    button [onClick (Friends (RemoveFriend user.id))] [text "Remove From Friends"]
+    div [class "name"] [b [] [text "Name:"], text user.name],
+    div [class "description"] [b [] [text "Description:"], text user.description],
+    button [onClick (Friends (RemoveFriend user.id)), class "form-control"] [text "Remove From Friends"]
   ]
 
 renderFriendReqPreview : User -> (User, UserInfo) -> Html Msg
 renderFriendReqPreview currentUser (user, userInfo) =
-  div [onClick (GoToProfile user)] [
+  div [onClick (GoToProfile user), class "list-group-item"] [
     img [src (avatarUrl currentUser user)] [],
-    div [class "name"] [text user.name],
-    div [class "description"] [text user.description],
-    button [onClick (Friends (RemoveFriend user.id))] [text "Decline"],
-    button [onClick (Friends (ApproveRequest user.id))] [text "Approve"]
+    div [class "name"] [b [] [text "Name:"], text user.name],
+    div [class "description"] [b [] [text "Description:"], text user.description],
+    button [onClick (Friends (RemoveFriend user.id)), class "form-control"] [text "Decline"],
+    button [onClick (Friends (ApproveRequest user.id)), class "form-control"] [text "Approve"]
   ]
 

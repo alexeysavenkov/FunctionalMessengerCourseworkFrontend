@@ -19,3 +19,4 @@ type ModeratorMsg =
   | LoadComplaints
   | LoadedComplaints (Result Http.Error (List (User, String, Int, List String)))
   | GoToScreen ModScreen
+  | ModLogout

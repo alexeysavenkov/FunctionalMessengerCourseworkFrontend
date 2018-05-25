@@ -25,10 +25,13 @@ userSearchUpdate msg model =
 
 userSearchView : User -> UserSearchModel -> Html Msg
 userSearchView currentUser model =
-  div [ ] [ input [onInput (\x -> UserSearch (ChangeQuery x)), placeholder "Query", value model.query] []
+  div [ ] [ h1 [class "display-4"] [text "User Search"]
           , br [] []
-          , button [onClick (UserSearch SearchUsers)] [text "Search"]
-          , ul [] (List.map (\user -> li [] [
+          , input [onInput (\x -> UserSearch (ChangeQuery x)), placeholder "Query", class "form-control", value model.query] []
+          , br [] []
+          , button [onClick (UserSearch SearchUsers), class "form-control"] [text "Search"]
+          , br [] []
+          , ul [class "list-group"] (List.map (\user -> li [class "list-group-item"] [
               div [class "profilePreview", onClick (GoToProfile user)] [
                 img [src (avatarUrl currentUser user)] [],
                 div [class "name"] [text user.name],

@@ -129,7 +129,7 @@ profileView currentUser model =
       [ h1 [class "display-4"] [text (("Profile of " ++ (if String.isEmpty userInfo.name then "*No name*" else userInfo.name)) ++ if isYourProfile then " (You)" else "")]
       , if userRelations.youAreBlacklisted
         then h2 [] [text "You were blacklisted"]
-        else (if userInfo.id == -1 && (not isYourProfile) then text "Loading..." else div [] [
+        else (if userInfo.id == -1 && (not isYourProfile) then text "Loading..." else div [class "avatars"] [
           img [src (
               case (model.notSavedUser.avatarId, model.contents) of
                 (_, x::_) -> x
@@ -139,32 +139,32 @@ profileView currentUser model =
           , if isYourProfile then renderDropZone model.dropZone else text ""
           , if isYourProfile
             then input [onInput (\x -> ChangeProfileInfo {userInfo|name=x}), placeholder "Name", value userInfo.name, class "form-control"] []
-            else div [] [text "Name: ", text userInfo.name]
+            else div [] [ ]
           , br [] []
           , if isYourProfile
             then input [onInput (\x -> ChangeProfileInfo {userInfo|description=x}), placeholder "Description", value userInfo.description, class "form-control"] []
-            else div [] [text "Description: ", text userInfo.description]
+            else div [] [b [] [text "Description: "], text userInfo.description]
           , br [] []
           , if isYourProfile
             then button [onClick SaveProfileChanges, class "form-control"] [text "Save changes"]
             else div [] [
                 if userRelations.isFriend
-                then button [onClick (FriendRequest userInfo.id False)] [text "Remove from friends"]
+                then button [onClick (FriendRequest userInfo.id False), class "form-control"] [text "Remove from friends"]
                 else (
                   if userRelations.friendRequestSent
-                  then button [onClick (FriendRequest userInfo.id False)] [text "Cancel friend request"]
+                  then button [onClick (FriendRequest userInfo.id False), class "form-control"] [text "Cancel friend request"]
                   else (
                     if userRelations.friendRequestReceived
-                    then button [onClick (FriendRequest userInfo.id True)] [text "Confirm friend"]
-                    else button [onClick (FriendRequest userInfo.id True)] [text "Add to friends"]
+                    then button [onClick (FriendRequest userInfo.id True), class "form-control"] [text "Confirm friend"]
+                    else button [onClick (FriendRequest userInfo.id True), class "form-control"] [text "Add to friends"]
                   )
                 )
               , if userRelations.isBlacklisted
-                then button [onClick (Blacklist userInfo.id False)] [text "Remove from blacklist"]
-                else button [onClick (Blacklist userInfo.id True)] [text "Blacklist"]
+                then button [onClick (Blacklist userInfo.id False), class "form-control"] [text "Remove from blacklist"]
+                else button [onClick (Blacklist userInfo.id True), class "form-control"] [text "Blacklist"]
               , br [] [], br [] []
-              , button [onClick (Report userInfo.id "Spam")] [text "Report spam"]
-              , button [onClick (Report userInfo.id "Bad behavior")] [text "Report bad behavior"]
+              , button [onClick (Report userInfo.id "Spam"), class "form-control"] [text "Report spam"]
+              , button [onClick (Report userInfo.id "Bad behavior"), class "form-control"] [text "Report bad behavior"]
               , br [] [], br [] []
               , div [] [text ""]
               ]
